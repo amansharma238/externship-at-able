@@ -1,65 +1,19 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
-<style>
-    .login-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
-
-    button {
-        background-color: #2c80ec;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        cursor: pointer;
-        width: 80%;
-    }
-
-    button:hover {
-        opacity: 0.8;
-    }
-
-    .login-container {
-        padding: 10px;
-    }
-
-    input[type=email],
-    input[type=password],
-    input[type=text] {
-        width: 80%;
-        padding: 14px 20px;
-        margin: 8px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-
-    }
-
-    .div-form {
-        width: 80%;
-        padding-left: 100px;
-        padding-top: 60px;
-        margin: 8px 0;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-
-    }
-</style>
-
 <div class="login-container">
     <div class="div-welcome">
         <h1>Welcome to Your Dashboard</h1>
-        <p>This is the homepage of lead</p>
-        {% if page == 'login' %}
-        <P>maanagement system, login now to begin</P>
-        {% else %}
-        <P>maanagement system, Register now to begin</P>
-        {% endif %}
         <div>
-            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.sYm7bo5zVn4dMm6BpeUXEgHaEK%26pid%3DApi&f=1"
-                alt="random" width="550" height="450">
+            <p>This is the homepage of lead</p>
+            {% if page == 'login' %}
+            <P>management system, login now to begin</P>
+            {% else %}
+            <P>management system, Register now</P>
+            {% endif %}
+        </div>
+        <div>
+            <img src="{% static 'images/dashboard.jpg' %}" alt="random" width="500" height="450">
         </div>
     </div>
     {% if page == 'login' %}
@@ -69,33 +23,23 @@
             {% csrf_token %}
             <input type="email" name="email" placeholder="Enter email address" /><br>
             <input type="password" name="password" placeholder="Enter password" /><br>
-            <!-- <input type="submit" value="Login now"> -->
             <button type="submit">Login now</button>
         </form>
-        <p>Haven't signed up yet?</p>
-        <a href="{% url 'register' %}">Sign up</a><br>
+        <div style="padding: 0px 120px;">
+            <p>New here? <a href="{% url 'register' %}">Register now</a></p>
+        </div>
     </div>
     {% else %}
     <div class="div-form">
-        <h3>Sign up</h3>
+        <h3>Register a new account</h3>
         <form method="POST" action="">
             {% csrf_token %}
-            {% for field in form %}
-            <p>
-                {{ field.label_tag }}<br>
-                {{ field }}<br>
-                {% if field.help_text %}
-                <small style="color: grey">{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
-            <p style="color: red">{{ error }}</p>
-            {% endfor %}
-            </p>
-            {% endfor %}
+            {{form.as_p}}
             <button type="submit">Sign up</button>
         </form>
-        <p>Already signed up yet?</p>
-        <a href="{% url 'login' %}">Login</a><br>
+        <div style="padding: 0px 120px;">
+            <p>Already Have an account? <a href="{% url 'login' %}">Login Now</a></p>
+        </div>
     </div>
     {% endif %}
 </div>

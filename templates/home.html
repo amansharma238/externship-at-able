@@ -1,7 +1,26 @@
 {% extends 'main.html' %}
 
 {% block content %}
+{% if user.is_authenticated %}
+<p><a href="{% url 'logout' %}">Log Out</a></p>
+<div>
 
-<h1>Welcome to Home Page</h1>
+    <h2>Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
+    <p>Below you will find the list of all assigned leads to you.</p>
+</div>
+{% for lead in leads %}
+{% if lead.manager_id == user.username %}
+{{lead.name}}
+{{lead.email}}
+{% endif %}
+{% endfor %}
+<div>
+
+</div>
+{% else %}
+<p>You are not logged in</p>
+<a href="{% url 'login' %}">Log In</a> |
+<a href="{% url 'register' %}">Sign Up</a>
+{% endif %}
 
 {% endblock %}
