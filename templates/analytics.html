@@ -1,0 +1,193 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    div {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+    }
+
+    body,
+    html {
+        background: #ffffff;
+        padding-top: 10px;
+    }
+
+    .wrapper {
+        width: 60%;
+        display: block;
+        overflow: hidden;
+        margin: 0 auto;
+        padding: 60px 50px;
+        background: rgb(255, 255, 255);
+        border-radius: 4px;
+    }
+
+    canvas {
+        background: #fff;
+        height: 400px;
+    }
+
+    h1 {
+        font-family: Roboto;
+        color: rgb(0, 0, 0);
+        margin-top: 50px;
+        font-weight: 200;
+        text-align: center;
+        display: block;
+        text-decoration: none;
+    }
+</style>
+<p><a href="{% url 'logout' %}">Log Out</a></p>
+<div>
+    <div>
+        <h2>Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
+    </div>
+    <h1>Chart JS Stacked Bar example</h1>
+    <div class="wrapper">
+        <canvas id="myChart4"></canvas>
+    </div>
+</div>
+<div>
+    <table>
+        <thead>
+            <th>S.No</th>
+            <th>Name</th>
+            <th>Leads Converted</th>
+        </thead>
+        <tbody>
+            <tr>
+
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    var data;
+    async function funcName(link) {
+        newdata = []
+        while (true) {
+            const response = await fetch(link);
+            data = await response.json();
+            data.results.forEach(i => {
+                newdata.push(i)
+            })
+            if (data.next == null)
+                break;
+            link = data.next
+        }
+        return newdata
+    }
+
+    async function dataFunc() {
+        newdata = await funcName("http://127.0.0.1:8000/api/leads/");
+        let arr = []
+        newdata.forEach(lead => {
+            let date = new Date(lead.created);
+            date = date.toDateString()
+            arr.push(date)
+
+        })
+
+        let obj = {}
+        let j = 0;
+        arr.forEach(i => {
+            if (i in obj) {
+                obj[i].push(newdata[j])
+            }
+            else
+                obj[i] = [newdata[j]]
+            j += 1;
+        })
+
+        hot = {}
+        med = {}
+        grey = {}
+
+        for (let i in obj) {
+            if (!(i in hot))
+                hot[i] = 0
+            obj[i].forEach(j => {
+                if (j.state === "Hot Lead")
+                    hot[i] += 1
+            })
+        }
+
+        for (let i in obj) {
+            if (!(i in med))
+                med[i] = 0
+            obj[i].forEach(j => {
+                if (j.state === "Med Lead")
+                    med[i] += 1
+            })
+        }
+
+        for (let i in obj) {
+            if (!(i in grey))
+                grey[i] = 0
+            obj[i].forEach(j => {
+                if (j.state === "Grey Lead")
+                    grey[i] += 1
+            })
+        }
+
+        let data_list = [
+            {
+                label: 'Hot',
+                backgroundColor: "#caf270",
+                data: Object.values(hot),
+            },
+            {
+                label: 'Med',
+                backgroundColor: "#45c490",
+                data: Object.values(med),
+            },
+            {
+                label: 'Grey',
+                backgroundColor: "#008d93",
+                data: Object.values(grey),
+            }
+        ]
+
+        var ctx = document.getElementById("myChart4").getContext('2d');
+
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                // 
+                labels: Object.keys(obj),
+                datasets: data_list,
+            },
+            options: {
+                tooltips: {
+                    displayColors: true,
+                    callbacks: {
+                        mode: 'x',
+                    },
+                },
+                scales: {
+                    xAxes: [{
+                        stacked: false,
+                        gridLines: {
+                            display: false,
+                        }
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                        type: 'linear',
+                    }]
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: { position: 'bottom' },
+            }
+        });
+    }
+    dataFunc();
+</script>
+
+{% endblock %}

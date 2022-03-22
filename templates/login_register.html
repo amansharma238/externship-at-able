@@ -13,7 +13,7 @@
             {% endif %}
         </div>
         <div>
-            <img src="{% static 'images/dashboard.jpg' %}" alt="random" width="500" height="450">
+            <img src="{% static 'authentication/images/dashboard.jpg' %}" alt="random" width="500" height="450">
         </div>
     </div>
     {% if page == 'login' %}
@@ -34,7 +34,17 @@
         <h3>Register a new account</h3>
         <form method="POST" action="">
             {% csrf_token %}
-            {{form.as_p}}
+            {% for field in form %}
+            <p>
+                {{ field }}<br>
+                {% if field.help_text %}
+                <small style="color: grey">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+            <p style="color: red">{{ error }}</p>
+            {% endfor %}
+            </p>
+            {% endfor %}
             <button type="submit">Sign up</button>
         </form>
         <div style="padding: 0px 120px;">

@@ -1,0 +1,42 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<style>
+    html,
+    body {
+        height: 100%;
+    }
+
+    .center {
+        margin: auto;
+        position: relative;
+        text-align: center;
+        top: 50%;
+        width: 20%;
+    }
+
+    button>#submit {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 16px;
+
+        position: absolute;
+        width: 122px;
+        height: 44px;
+        left: 45.76%;
+        right: 45.76%;
+        top: calc(50% - 44px/2 + 288px);
+
+        background-color: #007BFF;
+        border-radius: 5px;
+    }
+</style>
+<div class="center">
+    <img src="/authentication/static/authentication/images/error.jpg" alt="error" width="500" height="450">
+    <h3>It's not you it's us</h3>
+    <p>We are working on resolving the issue</p>
+    <button type="submit" id="submit">Reload</button>
+</div>
+{% endblock %}

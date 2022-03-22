@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from .forms import MyUserChangeForm, MyUserCreationForm
 from .models import SalesUser, Lead, Remark
 
+
 # Register your models here.
 admin.site.site_header = 'Leads Management Platform'
 
@@ -24,7 +25,7 @@ class MyUserAdmin(UserAdmin):
         (None, {'fields': ('email', 'password', )}),
         ('Personal info', {'fields': ('first_name',
          'last_name', 'user_type', 'manager_id')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_approved'
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_approved', 'groups', 'user_permissions'
                                     )}),
         ('Important dates', {
          'fields': ('last_login', 'date_joined')}),

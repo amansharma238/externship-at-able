@@ -1,0 +1,39 @@
+{% extends 'main.html' %}
+{% block content %}
+<div id="userremark">
+    <h3>Add Remark to this lead</h3>
+    <div id="leadremark"></div>
+    <input type="text" name="remark" placeholder="Add your remakrs here">
+    <button type="button" onclick="getValue()">Save and exit</button>
+</div>
+<script>
+
+    var data;
+    async function funcName(link) {
+
+        const response = await fetch(link);
+        data = await response.json();
+        data.forEach(element => {
+            let leadremark = document.getElementById("leadremark")
+            let user = document.createElement("h5")
+            user.innerText = element.user.first_name + " " + element.user.last_name
+            let created = document.createElement("p")
+            let date = new Date(element.created);
+            const formattedDate = date.toLocaleString("en-US", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "numeric",
+                minute: "2-digit"
+            });
+            created.innerText = formattedDate
+
+            let remark = document.createElement("p")
+            remark.innerText = element.remark
+            leadremark.append(user, created, remark)
+        });
+        console.log(data)
+    }
+    funcName("http://127.0.0.1:8000/api/remarks/")
+</script>
+{% endblock %}
