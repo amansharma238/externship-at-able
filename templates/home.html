@@ -1,111 +1,31 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
-<style>
-    @import url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
-
-    * {
-        box-sizing: border-box;
-    }
-
-    body .user {
-        position: absolute;
-        width: 90%;
-        left: 50px;
-        background-color: #edeef6;
-        font-family: 'Poppins', sans-serif;
-        padding: 1%;
-        border: 1px solid #EBF0F5;
-        box-sizing: border-box;
-        border-radius: 10px;
-    }
-
-    body .filter {
-        position: absolute;
-        width: 90%;
-        left: 50px;
-        top: 280px;
-        padding: 1%;
-        /* display: flex; */
-        border: 1px solid #EBF0F5;
-        box-sizing: border-box;
-
-    }
-
-    body .table {
-        position: absolute;
-        width: 90%;
-        height: 65%;
-        left: 50px;
-        top: 400px;
-        padding: 2%;
-        border: 1px solid #EBF0F5;
-        box-sizing: border-box;
-        border-radius: 10px;
-    }
-
-    input #button {
-        background-color: #47a386;
-        border: 0;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0, 0.2);
-        color: #fff;
-        padding: 10px 25px;
-    }
-
-    .modal-container {
-        background-color: rgba(0, 0, 0, 0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        opacity: 0;
-        pointer-events: none;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        width: 100%;
-        transition: opacity 0.3s ease;
-    }
-
-    .modal-container.show {
-        pointer-events: auto;
-        opacity: 1;
-    }
-
-    .modal {
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        padding: 30px 50px;
-        width: 600px;
-        max-width: 100%;
-    }
-</style>
 {% if user.is_authenticated %}
-<a href="{% url 'logout' %}">Log Out</a>
+{% if user.user_type == 'admin' %}
+<div class="analytics">
+    <a href="{% url 'analytics' %}">Analytics</a>
+</div>
+{% endif %}
 <div class="user">
     <h2>Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
     <p>Below you will find the list of all assigned leads to you.</p>
 </div>
 <div class="filter">
     <h3>Filter leads by status</h3>
-    <div id="leadsinput">
-        <input type="button" name="New Lead" value="New Lead" />
-        <input type="button" name="Hot Lead" value="Hot Lead" />
-        <input type="button" name="Med Lead" value="Med Lead" />
-        <input type="button" name="Grey Lead" value="Grey Lead" />
-        <input type="button" name="Success" value="Success">
+    <div id="input-filter">
+        <input type="button" name="New Lead" value="New Lead" id="leadsinput" />
+        <input type="button" name="Hot Lead" value="Hot Lead" id="leadsinput" />
+        <input type="button" name="Med Lead" value="Med Lead" id="leadsinput" />
+        <input type="button" name="Grey Lead" value="Grey Lead" id="leadsinput" />
+        <input type="button" name="Success" value="Success" id="leadsinput" />
     </div>
 </div>
-<div>
-    <a href="{% url 'analytics' %}">Analytics</a>
-</div>
-<div class="table">
+<div class="lead-table">
     <table id="data-table" width="100%">
         <thead>
             <tr style="text-align: left;">
-                <th><input name="select_all" value="1" type="checkbox"></th>
+                <th><input type="checkbox" onclick="checkBoxToggle(this);"></th>
                 <th>S.No.</th>
                 <th>Full Name</th>
                 <th>Email Address</th>
@@ -118,25 +38,28 @@
         <tbody id="data-table2">
         </tbody>
     </table>
-    <!-- <input type="button" id="open" value="bu"> -->
     <div class="modal-container" id="modal_container">
         <div class="modal">
-            <input type="button" id="close" value="x" />
+            <h2>Add remark to this lead <button type="button" id="close">X</button></h2>
             <div id="leadremark">
             </div>
-            <form action="" id="userremark">
-                <input type="text" name="remark" placeholder="Add your remakrs here">
-                <input type="button" id="close-save" value="Save and exit">
+            <form id="userremark">
+                {% csrf_token %}
+                <textarea name="remark" id="remark" placeholder="Add your remarks here" rows="4"></textarea>
+                <button type="submit" id="close-save" onclick="passData(this)">Save and exit</button>
             </form>
         </div>
     </div>
+</div>
+<div id="paginator">
+
 </div>
 <script src="{% static 'authentication/js/main.js' %}">
 </script>
 {% else %}
 <p>You are not logged in</p>
-<a href="{% url 'login' %}">Log In</a> |
-<a href="{% url 'register' %}">Sign Up</a>
+<a href="{% url 'login' %}" id="login">Log In</a> |
+<a href="{% url 'register' %} " id="logout">Sign Up</a>
 {% endif %}
 
 {% endblock %}

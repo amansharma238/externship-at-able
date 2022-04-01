@@ -44,3 +44,13 @@ class RemarkSerializer(serializers.ModelSerializer):
             "created",
             "updated",
         ]
+
+
+class NewRemarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Remark
+        fields = [
+            "remark",
+            "user",
+            "lead",
+        ]

@@ -1,5 +1,7 @@
-<div>
-    <a href="/">
-        <h1>Cuvette</h3>
-    </a>
+<div class="header">
+    <a href="/">Cuvette</a>
+
+    {% if user.is_authenticated %}
+    <a href="{% url 'logout' %}" id="logout" style="color: #FD4646;">Logout</a>
+    {% endif %}
 </div>

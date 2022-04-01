@@ -2,66 +2,55 @@
 
 {% block content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-    div {
-        display: grid;
-        grid-template-columns: 3fr 1fr;
-    }
 
-    body,
-    html {
-        background: #ffffff;
-        padding-top: 10px;
-    }
-
-    .wrapper {
-        width: 60%;
-        display: block;
-        overflow: hidden;
-        margin: 0 auto;
-        padding: 60px 50px;
-        background: rgb(255, 255, 255);
-        border-radius: 4px;
-    }
-
-    canvas {
-        background: #fff;
-        height: 400px;
-    }
-
-    h1 {
-        font-family: Roboto;
-        color: rgb(0, 0, 0);
-        margin-top: 50px;
-        font-weight: 200;
-        text-align: center;
-        display: block;
-        text-decoration: none;
-    }
-</style>
-<p><a href="{% url 'logout' %}">Log Out</a></p>
-<div>
-    <div>
-        <h2>Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
-    </div>
-    <h1>Chart JS Stacked Bar example</h1>
-    <div class="wrapper">
-        <canvas id="myChart4"></canvas>
-    </div>
+<div class="user">
+    <h2>Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
+    <p>Here’s how your dashboard looks like today!</p>
 </div>
-<div>
-    <table>
-        <thead>
-            <th>S.No</th>
-            <th>Name</th>
-            <th>Leads Converted</th>
-        </thead>
-        <tbody>
-            <tr>
+<div class="row">
+    <div id="column">
+        <div class="stats">
+            <div id="total">
 
-            </tr>
-        </tbody>
-    </table>
+                <h1>📊</h1>
+            </div>
+            <div id="hot">
+                <p></p>
+                <h1>🔥</h1>
+            </div>
+            <div id="med">
+                <h1>👍</h1>
+            </div>
+            <div id="gre">
+                <h1>👎</h1>
+            </div>
+        </div>
+        <div class="graph">
+            <h2 style="display: inline;">Lead Statistics</h2>
+            <div>
+                <select name="days" id="day">
+                    <option value="Last 7 days">Last 7 days</option>
+                    <option value="Last 15 days">Last 15 days</option>
+                </select>
+            </div>
+            <div class="wrapper">
+                <canvas id="myChart4"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="analytics-table">
+        <table width="100%">
+            <thead>
+                <tr style="text-align: left;">
+                    <th>Rank</th>
+                    <th>Full Name</th>
+                    <th>Leads Converted</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
 <script>
     var data;

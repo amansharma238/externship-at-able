@@ -70,6 +70,7 @@ def registerUser(request):
 
 
 def home(request):
+
     context = {}
     return render(request, "home.html")
 
@@ -79,11 +80,7 @@ def analytics(request):
 
 
 def remarkLead(request):
-    # if request.method == "POST":
-    #     mark = Remark.objects.get(user=request.user)
-    #     message = Remark.objects.create(
-    #         user=request.user, lead=mark.lead, remark=request.POST.get("remark")
-    #     )
+
     context = {}
     return render(request, "remark.html", context)
 
