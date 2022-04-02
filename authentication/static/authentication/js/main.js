@@ -23,7 +23,7 @@ function checkBoxToggle(source) {
 
 async function changeStatus(rawdata) {
     var token = getCookie('csrftoken');
-    fetch(`http://127.0.0.1:8000/api/leads/${rawdata.id}`, {
+    fetch(`/api/leads/${rawdata.id}`, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json, text/plain, */*',
@@ -37,7 +37,7 @@ async function changeStatus(rawdata) {
 }
 
 // Implement filters
-var plink = "http://127.0.0.1:8000/api/leads/?page=1"
+var plink = "/api/leads/?page=1"
 let filter = ""
 function myfunc(e) {
     filter = e.target.value;
@@ -97,11 +97,11 @@ async function filterFunction(link, filter) {
         view.innerHTML = "<input type='button' id=" + lead.user_id.email + "/" + lead.id + " value='view' class='button' onmouseover='zoom(this);' />"
         // console.log("valueeeeee: ", view.children[0].value);
 
-        let viewvar = remarkFunc("http://127.0.0.1:8000/api/remarks/" + lead.user_id.email + "/" + lead.id)
+        let viewvar = remarkFunc("/api/remarks/" + lead.user_id.email + "/" + lead.id)
         // console.log("dkjsdkj ", viewvar);
 
         view.addEventListener('click', (e) => {
-            remarkFunc("http://127.0.0.1:8000/api/remarks/" + lead.user_id.email + "/" + lead.id)
+            remarkFunc("/api/remarks/" + lead.user_id.email + "/" + lead.id)
             modal_container.classList.add('show');
         })
         row.append(check, id, name, email, phone_number, assigned, state, view)
@@ -124,7 +124,7 @@ async function zoom(ele) {
     var id = ele.id;
     var iid = id.split('/')[1];
     // console.log("iiidd ", parseInt(iid));
-    const response = await fetch("http://127.0.0.1:8000/api/remarks/" + id);
+    const response = await fetch("/api/remarks/" + id);
     remarkdata = await response.json();
     rawdata = {
         "remark": '',
@@ -146,7 +146,7 @@ function passData($this) {
 
     console.log("rawdata:   ", rawdata)
     if (rawdata != {} && rawdata["remark"] != '') {
-        fetch('http://127.0.0.1:8000/api/remarks/', {
+        fetch('/api/remarks/', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -189,7 +189,7 @@ async function remarkFunc(link) {
 function paginateFunc(link) {
     filterFunction(link, filter);
     Pagination(link)
-    if (link == "http://127.0.0.1:8000/api/leads/")
+    if (link == "/api/leads/")
         plink = link + "?page=1"
 }
 
