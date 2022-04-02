@@ -4,33 +4,40 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="user">
-    <h2>Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
+    <h2 id="greet">Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
     <p>Here’s how your dashboard looks like today!</p>
 </div>
 <div class="row">
     <div id="column">
         <div class="stats">
             <div id="total">
-
                 <h1>📊</h1>
+                <div id="ttotal">
+                </div>
             </div>
             <div id="hot">
-                <p></p>
                 <h1>🔥</h1>
+                <div id="hhot">
+                </div>
             </div>
             <div id="med">
                 <h1>👍</h1>
+                <div id="mmed">
+                </div>
             </div>
             <div id="gre">
                 <h1>👎</h1>
+                <div id="ggre">
+                </div>
             </div>
         </div>
         <div class="graph">
             <h2 style="display: inline;">Lead Statistics</h2>
-            <div>
+            <div id="select-days">
                 <select name="days" id="day">
                     <option value="Last 7 days">Last 7 days</option>
-                    <option value="Last 15 days">Last 15 days</option>
+                    <option value="Last Week">Last Week</option>
+                    <option value="Last Month">Last Month</option>
                 </select>
             </div>
             <div class="wrapper">
@@ -47,12 +54,34 @@
                     <th>Leads Converted</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="analytics-body">
             </tbody>
         </table>
     </div>
 </div>
 <script>
+
+    var myDate = new Date();
+    var hrs = myDate.getHours();
+    var greet;
+    if (hrs < 12)
+        greet = 'Good Morning';
+    else if (hrs >= 12 && hrs <= 17)
+        greet = 'Good Afternoon';
+    else if (hrs >= 17 && hrs <= 24)
+        greet = 'Good Evening';
+    document.getElementById("greet").innerText = document.getElementById("greet").innerText.replace("Good Morning", greet)
+
+    function sum(obj) {
+        var sum = 0;
+        for (var el in obj) {
+            if (obj.hasOwnProperty(el)) {
+                sum += parseFloat(obj[el]);
+            }
+        }
+        return sum;
+    }
+
     var data;
     async function funcName(link) {
         newdata = []
@@ -71,28 +100,122 @@
 
     async function dataFunc() {
         newdata = await funcName("http://127.0.0.1:8000/api/leads/");
-        let arr = []
+        let arr = [];
+        let rank = {};
+        let rrank = {};
         newdata.forEach(lead => {
             let date = new Date(lead.created);
-            date = date.toDateString()
+            console.log("dd ", date.getDate() + "/" + (date.getMonth() + 1))
+            date = date.getDate() + "/" + (date.getMonth() + 1)
             arr.push(date)
+            if (lead.user_id.email in rank && lead.state == 'Hot Lead') {
+                rank[lead.user_id.email] += 1
+                rrank[lead.user_id.first_name + " " + lead.user_id.last_name] += 1
+            }
+            else if (lead.state == 'Hot Lead') {
+                rank[lead.user_id.email] = 1
+                rrank[lead.user_id.first_name + " " + lead.user_id.last_name] = 1
+            }
 
         })
 
+        const sorted = Object.entries(rrank)
+            .sort(([, v1], [, v2]) => v2 - v1)
+            .reduce((obj, [k, v]) => ({
+                ...obj,
+                [k]: v
+            }), {})
+        // console.log(sorted)
+        var index = 1;
+        for (i in sorted) {
+            let sales = document.getElementById("analytics-body");
+            let row = document.createElement('tr');
+            let name = document.createElement('td');
+            let leadconverted = document.createElement('td');
+            let ind = document.createElement('td');
+            name.innerText = i;
+            leadconverted.innerText = sorted[i];
+            ind = `#${index}`;
+            row.append(ind, name, leadconverted);
+            sales.append(row);
+            index += 1;
+        }
+
         let obj = {}
+        Date.prototype.addDays = function (days) {
+            this.setDate(this.getDate() + parseInt(days));
+            return this;
+        };
+
+        for (var i = 29; i >= 0; i--) {
+            let newDate = new Date().addDays(-i);
+            // console.log(newDate.getDate(), newDate.getMonth() + 1);
+            obj[newDate.getDate() + "/" + (newDate.getMonth() + 1)] = [{}];
+        }
         let j = 0;
         arr.forEach(i => {
             if (i in obj) {
                 obj[i].push(newdata[j])
             }
-            else
-                obj[i] = [newdata[j]]
             j += 1;
         })
+
+        let res = {};
+        let x = Object.keys(obj).length;
+        console.log("obj: ", obj);
+        console.log("len: ", x);
+
+        let dateselect = "Last 7 days";
+
+        function changefunc(dataselect) {
+            res = {};
+            if (dateselect == "Last 7 days") {
+                let newobj = Object.entries(obj).slice(x - 7, x)
+
+                for (pair of newobj) {
+                    const [key, value] = pair;
+                    res[key] = value;
+                };
+            }
+            else if (dateselect == "Last Week") {
+                let newobj = Object.entries(obj).slice(x - 14, x - 7)
+
+                for (pair of newobj) {
+                    const [key, value] = pair;
+                    res[key] = value;
+                };
+            }
+            else if (dateselect == "Last Month") {
+                let newobj = Object.entries(obj).slice(x - 37, x - 30)
+
+                for (pair of newobj) {
+                    const [key, value] = pair;
+                    res[key] = value;
+                };
+            }
+            console.log("ress", res);
+            return res;
+        }
+        res = changefunc(dateselect)
+        function changedays(e) {
+            console.log(e.target.value);
+            return changefunc(e.target.value);
+        }
+        let day = document.getElementById("select-days");
+
+        let ppp = day.querySelector("select").addEventListener('change', changedays);
+        console.log("ppp", ppp);
+        console.log("oooj: ", res);
+
 
         hot = {}
         med = {}
         grey = {}
+
+
+        newhot = {}
+        newmed = {}
+        newgrey = {}
 
         for (let i in obj) {
             if (!(i in hot))
@@ -121,31 +244,74 @@
             })
         }
 
+        for (let i in res) {
+            if (!(i in newhot))
+                newhot[i] = 0
+            res[i].forEach(j => {
+                if (j.state === "Hot Lead")
+                    newhot[i] += 1
+            })
+        }
+
+        for (let i in res) {
+            if (!(i in newmed))
+                newmed[i] = 0
+            res[i].forEach(j => {
+                if (j.state === "Med Lead")
+                    newmed[i] += 1
+            })
+        }
+
+        for (let i in res) {
+            if (!(i in newgrey))
+                newgrey[i] = 0
+            res[i].forEach(j => {
+                if (j.state === "Grey Lead")
+                    newgrey[i] += 1
+            })
+        }
+
+        var totalhot = sum(hot);
+        var totalmed = sum(med);
+        var totalgrey = sum(grey);
+        var total = totalhot + totalmed + totalgrey;
+
+        let totaldiv = document.getElementById("ttotal");
+        totaldiv.innerHTML = `<h2>${total}</h2> <p>Total Leads</p>`;
+
+        let hotdiv = document.getElementById("hhot");
+        hotdiv.innerHTML = `<h2>${totalhot}</h2> <p>Hot Leads</p>`;
+
+        let meddiv = document.getElementById("mmed");
+        meddiv.innerHTML = `<h2>${totalmed}</h2> <p>Medium Leads</p>`;
+
+        let grediv = document.getElementById("ggre");
+        grediv.innerHTML = `<h2>${totalgrey}</h2> <p>Grey Leads</p>`;
+
         let data_list = [
             {
                 label: 'Hot',
                 backgroundColor: "#caf270",
-                data: Object.values(hot),
+                data: Object.values(newhot),
             },
             {
                 label: 'Med',
                 backgroundColor: "#45c490",
-                data: Object.values(med),
+                data: Object.values(newmed),
             },
             {
                 label: 'Grey',
                 backgroundColor: "#008d93",
-                data: Object.values(grey),
+                data: Object.values(newgrey),
             }
         ]
 
         var ctx = document.getElementById("myChart4").getContext('2d');
-
         var myChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 // 
-                labels: Object.keys(obj),
+                labels: Object.keys(res),
                 datasets: data_list,
             },
             options: {
@@ -154,6 +320,13 @@
                     callbacks: {
                         mode: 'x',
                     },
+                },
+                plugins: {
+                    datalabels: {
+                        display: true,
+                        align: 'center',
+                        anchor: 'center'
+                    }
                 },
                 scales: {
                     xAxes: [{

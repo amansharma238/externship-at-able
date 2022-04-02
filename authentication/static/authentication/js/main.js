@@ -1,3 +1,16 @@
+
+// greeting
+var myDate = new Date();
+var hrs = myDate.getHours();
+var greet;
+if (hrs < 12)
+    greet = 'Good Morning';
+else if (hrs >= 12 && hrs <= 17)
+    greet = 'Good Afternoon';
+else if (hrs >= 17 && hrs <= 24)
+    greet = 'Good Evening';
+document.getElementById("greet").innerText = document.getElementById("greet").innerText.replace("Good Morning", greet)
+
 // check all checkboxes
 function checkBoxToggle(source) {
     var checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -8,11 +21,18 @@ function checkBoxToggle(source) {
 }
 
 
-async function changeStatus(e) {
-    console.log(e.target.value);
-    const response = await fetch("http://127.0.0.1:8000/api/leads/");
-    data = await response.json();
-    console.log(data);
+async function changeStatus(rawdata) {
+    var token = getCookie('csrftoken');
+    fetch(`http://127.0.0.1:8000/api/leads/${rawdata.id}`, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': token
+        },
+        body: JSON.stringify(rawdata),
+    }).then(res => res.json())
+        .then(res => console.log(res));
 
 }
 
@@ -57,14 +77,20 @@ async function filterFunction(link, filter) {
         phone_number.innerText = lead.phone_number
         let anArray = ["New Lead", "Hot Lead", "Med Lead", "Grey Lead", "Success"];
         let new_list = anArray.splice(anArray.indexOf(lead.state), 1);
-        state.innerHTML = "<select name='states' id='state'>\
+        state.innerHTML = "<form><select name='states' id='state'>\
                         <option value='" + lead.state + "'>" + lead.state + "</option>\
                         <option value='" + anArray[0] + "'>" + anArray[0] + "</option>\
                         <option value='" + anArray[1] + "'>" + anArray[1] + "</option>\
                         <option value='" + anArray[2] + "'>" + anArray[2] + "</option>\
                         <option value='" + anArray[3] + "'>" + anArray[3] + "</option>\
                         </select>"
-        state.querySelector("select").addEventListener('change', changeStatus);
+        state.querySelector("select").addEventListener('change', (e) => {
+            console.log(e.target.value);
+            var new_data = lead;
+            new_data.state = e.target.value;
+            console.log("new data: ", new_data);
+            changeStatus(new_data);
+        });
         assigned.innerText = lead.user_id.first_name + " " + lead.user_id.last_name
         // console.log(lead.user_id.email, lead.id)
 
@@ -82,6 +108,14 @@ async function filterFunction(link, filter) {
         dataTable2.append(row)
     })
 }
+
+
+function getCookie(name) {
+    var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+}
+
+
 
 // Implement remarks
 

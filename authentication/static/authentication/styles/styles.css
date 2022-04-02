@@ -328,3 +328,11 @@ canvas {
 #gre h1 {
     padding-left: 130px;
 }
+
+#ttotal,
+#mmed,
+#hhot,
+#ggre {
+    position: absolute;
+    top: 5px;
+}

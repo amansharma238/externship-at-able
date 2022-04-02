@@ -31,6 +31,14 @@ class LeadSerializer(serializers.ModelSerializer):
         ]
 
 
+class NewLeadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lead
+        fields = [
+            "state",
+        ]
+
+
 class RemarkSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     lead = LeadSerializer()
