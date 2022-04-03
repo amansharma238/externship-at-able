@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
-
-# from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 from .forms import MyUserCreationForm
 from .models import Lead, Remark, SalesUser
 from django.contrib import messages
@@ -23,11 +22,11 @@ def loginUser(request):
         password = request.POST.get("password")
 
         try:
-            user = SalesUser.objects.get(username=email)
+            user = SalesUser.objects.get(email=email)
         except:
             messages.error(request, "User does not exist.")
 
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request, email=email, password=password)
 
         if user is not None:
             user2 = SalesUser.objects.filter(email=email).values("is_approved")
@@ -46,6 +45,7 @@ def loginUser(request):
     return render(request, "login_register.html", context)
 
 
+@login_required
 def logoutUser(request):
     logout(request)
     return redirect("home")
@@ -53,7 +53,6 @@ def logoutUser(request):
 
 def registerUser(request):
     form = MyUserCreationForm()
-
     if request.method == "POST":
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
@@ -70,22 +69,9 @@ def registerUser(request):
 
 
 def home(request):
-
-    context = {}
     return render(request, "home.html")
 
 
+@login_required
 def analytics(request):
     return render(request, "analytics.html", {})
-
-
-def remarkLead(request):
-
-    context = {}
-    return render(request, "remark.html", context)
-
-
-# Sales representative will call the person and add remarks/view previous remarks
-# Sales representative will mark the lead as hot/cold/med etc
-# Commit Message: Adding Notes Implemented
-# Note: While implementing sales represenative use Ajax as we do not want page to reload after submitting the remarks.

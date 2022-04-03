@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.conf.urls import handler404
 
 urlpatterns = [
+
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
     path("", include("authentication.urls")),

@@ -1,6 +1,6 @@
-from functools import partial
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from authentication.models import Lead, Remark, SalesUser
 from .serializers import (
     LeadSerializer,
@@ -24,6 +24,7 @@ class LeadFilter(django_filters.FilterSet):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def user_list(request):
     if request.method == "GET":
         salesuser = SalesUser.objects.all()
@@ -32,6 +33,7 @@ def user_list(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def user_detail(request, email):
     if request.method == "GET":
         salesuser = SalesUser.objects.get(email=email)
@@ -40,6 +42,7 @@ def user_detail(request, email):
 
 
 @api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
 def lead_list(request):
     if request.method == "GET":
         paginator = PageNumberPagination()
@@ -63,6 +66,7 @@ def lead_list(request):
 
 
 @api_view(["PUT"])
+@permission_classes([IsAuthenticated])
 def lead_detail(request, id):
     if request.method == "PUT":
         lead = Lead.objects.get(id=id)
@@ -74,6 +78,7 @@ def lead_detail(request, id):
 
 
 @api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
 def remark_list(request):
     if request.method == "GET":
         queryset = Remark.objects.all().order_by("-created")
@@ -95,6 +100,7 @@ def remark_list(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def remark_detail(request, email, id):
     if request.method == "GET":
         leadremark = Remark.objects.filter(user__email=email, lead__id=id).order_by(
