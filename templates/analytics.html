@@ -105,7 +105,6 @@
         let rrank = {};
         newdata.forEach(lead => {
             let date = new Date(lead.created);
-            console.log("dd ", date.getDate() + "/" + (date.getMonth() + 1))
             date = date.getDate() + "/" + (date.getMonth() + 1)
             arr.push(date)
             if (lead.user_id.email in rank && lead.state == 'Hot Lead') {
@@ -125,7 +124,7 @@
                 ...obj,
                 [k]: v
             }), {})
-        // console.log(sorted)
+
         var index = 1;
         for (i in sorted) {
             let sales = document.getElementById("analytics-body");
@@ -147,9 +146,8 @@
             return this;
         };
 
-        for (var i = 29; i >= 0; i--) {
+        for (var i = 36; i >= 0; i--) {
             let newDate = new Date().addDays(-i);
-            // console.log(newDate.getDate(), newDate.getMonth() + 1);
             obj[newDate.getDate() + "/" + (newDate.getMonth() + 1)] = [{}];
         }
         let j = 0;
@@ -160,14 +158,12 @@
             j += 1;
         })
 
-        let res = {};
+        var res = {};
         let x = Object.keys(obj).length;
-        console.log("obj: ", obj);
-        console.log("len: ", x);
+        var dateselect = "Last 7 days";
+        var myChart = null;
 
-        let dateselect = "Last 7 days";
-
-        function changefunc(dataselect) {
+        function changefunc(dateselect) {
             res = {};
             if (dateselect == "Last 7 days") {
                 let newobj = Object.entries(obj).slice(x - 7, x)
@@ -193,161 +189,158 @@
                     res[key] = value;
                 };
             }
-            console.log("ress", res);
-            return res;
+
+            // console.log("ress", res);
+            hot = {}
+            med = {}
+            grey = {}
+
+
+            newhot = {}
+            newmed = {}
+            newgrey = {}
+
+            for (let i in obj) {
+                if (!(i in hot))
+                    hot[i] = 0
+                obj[i].forEach(j => {
+                    if (j.state === "Hot Lead")
+                        hot[i] += 1
+                })
+            }
+
+            for (let i in obj) {
+                if (!(i in med))
+                    med[i] = 0
+                obj[i].forEach(j => {
+                    if (j.state === "Med Lead")
+                        med[i] += 1
+                })
+            }
+
+            for (let i in obj) {
+                if (!(i in grey))
+                    grey[i] = 0
+                obj[i].forEach(j => {
+                    if (j.state === "Grey Lead")
+                        grey[i] += 1
+                })
+            }
+
+            for (let i in res) {
+                if (!(i in newhot))
+                    newhot[i] = 0
+                res[i].forEach(j => {
+                    if (j.state === "Hot Lead")
+                        newhot[i] += 1
+                })
+            }
+
+            for (let i in res) {
+                if (!(i in newmed))
+                    newmed[i] = 0
+                res[i].forEach(j => {
+                    if (j.state === "Med Lead")
+                        newmed[i] += 1
+                })
+            }
+
+            for (let i in res) {
+                if (!(i in newgrey))
+                    newgrey[i] = 0
+                res[i].forEach(j => {
+                    if (j.state === "Grey Lead")
+                        newgrey[i] += 1
+                })
+            }
+
+            var totalhot = sum(hot);
+            var totalmed = sum(med);
+            var totalgrey = sum(grey);
+            var total = totalhot + totalmed + totalgrey;
+
+            let totaldiv = document.getElementById("ttotal");
+            totaldiv.innerHTML = `<h2>${total}</h2> <p>Total Leads</p>`;
+
+            let hotdiv = document.getElementById("hhot");
+            hotdiv.innerHTML = `<h2>${totalhot}</h2> <p>Hot Leads</p>`;
+
+            let meddiv = document.getElementById("mmed");
+            meddiv.innerHTML = `<h2>${totalmed}</h2> <p>Medium Leads</p>`;
+
+            let grediv = document.getElementById("ggre");
+            grediv.innerHTML = `<h2>${totalgrey}</h2> <p>Grey Leads</p>`;
+
+            let data_list = [
+                {
+                    label: 'Hot',
+                    backgroundColor: "#caf270",
+                    data: Object.values(newhot),
+                },
+                {
+                    label: 'Med',
+                    backgroundColor: "#45c490",
+                    data: Object.values(newmed),
+                },
+                {
+                    label: 'Grey',
+                    backgroundColor: "#008d93",
+                    data: Object.values(newgrey),
+                }
+            ]
+
+            var ctx = document.getElementById("myChart4").getContext('2d');
+            if (myChart != null)
+                myChart.destroy();
+
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    // 
+                    labels: Object.keys(res),
+                    datasets: data_list,
+                },
+                options: {
+                    tooltips: {
+                        displayColors: true,
+                        callbacks: {
+                            mode: 'x',
+                        },
+                    },
+                    plugins: {
+                        datalabels: {
+                            display: true,
+                            align: 'center',
+                            anchor: 'center'
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            stacked: false,
+                            gridLines: {
+                                display: false,
+                            }
+                        }],
+                        yAxes: [{
+                            stacked: true,
+                            ticks: {
+                                beginAtZero: true,
+                            },
+                            type: 'linear',
+                        }]
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: { position: 'bottom' },
+                }
+            });
         }
-        res = changefunc(dateselect)
+        changefunc(dateselect)
         function changedays(e) {
-            console.log(e.target.value);
-            return changefunc(e.target.value);
+            changefunc(e.target.value);
         }
         let day = document.getElementById("select-days");
-
-        let ppp = day.querySelector("select").addEventListener('change', changedays);
-        console.log("ppp", ppp);
-        console.log("oooj: ", res);
-
-
-        hot = {}
-        med = {}
-        grey = {}
-
-
-        newhot = {}
-        newmed = {}
-        newgrey = {}
-
-        for (let i in obj) {
-            if (!(i in hot))
-                hot[i] = 0
-            obj[i].forEach(j => {
-                if (j.state === "Hot Lead")
-                    hot[i] += 1
-            })
-        }
-
-        for (let i in obj) {
-            if (!(i in med))
-                med[i] = 0
-            obj[i].forEach(j => {
-                if (j.state === "Med Lead")
-                    med[i] += 1
-            })
-        }
-
-        for (let i in obj) {
-            if (!(i in grey))
-                grey[i] = 0
-            obj[i].forEach(j => {
-                if (j.state === "Grey Lead")
-                    grey[i] += 1
-            })
-        }
-
-        for (let i in res) {
-            if (!(i in newhot))
-                newhot[i] = 0
-            res[i].forEach(j => {
-                if (j.state === "Hot Lead")
-                    newhot[i] += 1
-            })
-        }
-
-        for (let i in res) {
-            if (!(i in newmed))
-                newmed[i] = 0
-            res[i].forEach(j => {
-                if (j.state === "Med Lead")
-                    newmed[i] += 1
-            })
-        }
-
-        for (let i in res) {
-            if (!(i in newgrey))
-                newgrey[i] = 0
-            res[i].forEach(j => {
-                if (j.state === "Grey Lead")
-                    newgrey[i] += 1
-            })
-        }
-
-        var totalhot = sum(hot);
-        var totalmed = sum(med);
-        var totalgrey = sum(grey);
-        var total = totalhot + totalmed + totalgrey;
-
-        let totaldiv = document.getElementById("ttotal");
-        totaldiv.innerHTML = `<h2>${total}</h2> <p>Total Leads</p>`;
-
-        let hotdiv = document.getElementById("hhot");
-        hotdiv.innerHTML = `<h2>${totalhot}</h2> <p>Hot Leads</p>`;
-
-        let meddiv = document.getElementById("mmed");
-        meddiv.innerHTML = `<h2>${totalmed}</h2> <p>Medium Leads</p>`;
-
-        let grediv = document.getElementById("ggre");
-        grediv.innerHTML = `<h2>${totalgrey}</h2> <p>Grey Leads</p>`;
-
-        let data_list = [
-            {
-                label: 'Hot',
-                backgroundColor: "#caf270",
-                data: Object.values(newhot),
-            },
-            {
-                label: 'Med',
-                backgroundColor: "#45c490",
-                data: Object.values(newmed),
-            },
-            {
-                label: 'Grey',
-                backgroundColor: "#008d93",
-                data: Object.values(newgrey),
-            }
-        ]
-
-        var ctx = document.getElementById("myChart4").getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                // 
-                labels: Object.keys(res),
-                datasets: data_list,
-            },
-            options: {
-                tooltips: {
-                    displayColors: true,
-                    callbacks: {
-                        mode: 'x',
-                    },
-                },
-                plugins: {
-                    datalabels: {
-                        display: true,
-                        align: 'center',
-                        anchor: 'center'
-                    }
-                },
-                scales: {
-                    xAxes: [{
-                        stacked: false,
-                        gridLines: {
-                            display: false,
-                        }
-                    }],
-                    yAxes: [{
-                        stacked: true,
-                        ticks: {
-                            beginAtZero: true,
-                        },
-                        type: 'linear',
-                    }]
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                legend: { position: 'bottom' },
-            }
-        });
+        day.querySelector("select").addEventListener('change', changedays);
     }
     dataFunc();
 </script>
