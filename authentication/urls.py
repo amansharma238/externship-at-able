@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path("login/", views.loginUser, name="login"),
@@ -8,6 +9,6 @@ urlpatterns = [
     path("register/", views.registerUser, name="register"),
     path("analytics/", views.analytics, name="analytics"),
     path("", views.home, name="home"),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-urlpatterns += staticfiles_urlpatterns()
+# print(static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

@@ -19,4 +19,5 @@ class EmailBackend(ModelBackend):
                 email__iexact=username)).order_by('id').first()
 
         if user.check_password(password) and self.user_can_authenticate(user):
+            print("uuuuuser", user)
             return user

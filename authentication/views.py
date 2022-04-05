@@ -1,8 +1,9 @@
+from webbrowser import get
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from .forms import MyUserCreationForm
-from .models import Lead, Remark, SalesUser
+from .models import SalesUser
 from django.contrib import messages
 
 # Create your views here.
@@ -20,14 +21,13 @@ def loginUser(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
-
         try:
             user = SalesUser.objects.get(email=email)
         except:
             messages.error(request, "User does not exist.")
 
         user = authenticate(request, email=email, password=password)
-
+        print("user", user)
         if user is not None:
             user2 = SalesUser.objects.filter(email=email).values("is_approved")
             # print(user2)

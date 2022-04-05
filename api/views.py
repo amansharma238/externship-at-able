@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from authentication.models import Lead, Remark, SalesUser
 from .serializers import (
     LeadSerializer,
@@ -24,7 +24,7 @@ class LeadFilter(django_filters.FilterSet):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def user_list(request):
     if request.method == "GET":
         salesuser = SalesUser.objects.all()
@@ -33,7 +33,7 @@ def user_list(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def user_detail(request, email):
     if request.method == "GET":
         salesuser = SalesUser.objects.get(email=email)

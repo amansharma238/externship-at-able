@@ -1,4 +1,3 @@
-from tokenize import group
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -13,10 +12,12 @@ class SalesUser(AbstractUser):
         ("admin", "sales_admin"),
         ("representative", "sales_representative"),
     )
-    username = models.CharField(max_length=50, blank=True, null=True, unique=True)
+    username = models.CharField(
+        max_length=50, blank=True, null=True, unique=True)
     email = models.EmailField("email address", unique=True)
     phone_number = models.CharField(max_length=10)
-    user_type = models.CharField(max_length=32, choices=USERTYPE, default="none")
+    user_type = models.CharField(
+        max_length=32, choices=USERTYPE, default="none")
     user_bio = models.CharField(max_length=200, null=True, blank=True)
     # profile_image = models.ImageField(default='default.jpg', upload_to='profile_pics')
     is_approved = models.BooleanField(default=False)
