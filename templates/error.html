@@ -7,15 +7,18 @@
         height: 100%;
     }
 
-    .center {
+    a {
+        text-decoration: none;
+    }
+
+    .error-center {
         margin: auto;
         position: relative;
         text-align: center;
-        top: 50%;
-        width: 20%;
+        top: 50px;
     }
 
-    button>#submit {
+    #error {
         display: flex;
         flex-direction: row;
         justify-content: center;
@@ -23,20 +26,18 @@
         padding: 8px 16px;
 
         position: absolute;
-        width: 122px;
-        height: 44px;
+        height: 35px;
         left: 45.76%;
         right: 45.76%;
-        top: calc(50% - 44px/2 + 288px);
 
-        background-color: #007BFF;
+        background: #007BFF;
         border-radius: 5px;
     }
 </style>
-<div class="center">
+<div class="error-center">
     <img src="{% static '/images/error.jpg' %}" alt="error" width="500" height="450">
     <h3>It's not you it's us</h3>
     <p>We are working on resolving the issue</p>
-    <button type="submit" id="submit">Reload</button>
+    <button type="submit" id="error"><a href="{% url 'home' %}">Reload</a></button>
 </div>
 {% endblock %}

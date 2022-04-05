@@ -46,7 +46,7 @@ def user_detail(request, email):
 def lead_list(request):
     if request.method == "GET":
         paginator = PageNumberPagination()
-        paginator.page_size = 2
+        paginator.page_size = 10
         filterset = LeadFilter(request.GET, queryset=Lead.objects.all())
         if not filterset.is_valid():
             raise translate_validation(filterset.errors)
