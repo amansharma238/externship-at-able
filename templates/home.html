@@ -8,8 +8,18 @@
 </div>
 {% endif %}
 <div class="user">
-    <h2 id="greet">Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
-    <p>Below you will find the list of all assigned leads to you.</p>
+    <div style="width: 10%; float:left">
+        <img class="profile-pic" src="{{request.user.profile.url}}" style=" width: 90px;
+        height: 90px;
+        margin: 0 auto;
+        border-radius: 50%;
+        padding: 1%;
+        margin-top: 7%;">
+    </div>
+    <div style="width: 90%; float:right">
+        <h2 id="greet">Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
+        <p>Below you will find the list of all assigned leads to you.</p>
+    </div>
 </div>
 <div class="filter">
     <h3>Filter leads by status</h3>
@@ -52,14 +62,15 @@
     </div>
 </div>
 <div id="paginator">
-
 </div>
-<script src="{% static '/js/main.js' %}">
+<script src="{% static 'js/main.js' %}">
 </script>
 {% else %}
-<p>You are not logged in</p>
-<a href="{% url 'login' %}" id="login">Log In</a> |
-<a href="{% url 'register' %} " id="logout">Sign Up</a>
+<div id="home-container">
+    <p>You are not logged in</p>
+    <a href="{% url 'login' %}" id="login">Log In</a>
+    <a href="{% url 'register' %} " id="logout">Sign Up</a>
+</div>
 {% endif %}
 
 {% endblock %}

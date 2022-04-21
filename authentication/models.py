@@ -19,7 +19,8 @@ class SalesUser(AbstractUser):
     user_type = models.CharField(
         max_length=32, choices=USERTYPE, default="none")
     user_bio = models.CharField(max_length=200, null=True, blank=True)
-    # profile_image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    profile = models.ImageField(
+        default='default.jpg', null=True, blank=True)
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     USERNAME_FIELD = "email"

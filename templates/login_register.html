@@ -13,13 +13,13 @@
             {% endif %}
         </div>
         <div>
-            <img src="{% static 'images/dashboard.jpg' %}" alt="random" width="500" height="450">
+            <img src="{% static 'images/dashboard1.svg' %}" alt="random" width="500" height="450">
         </div>
     </div>
     {% if page == 'login' %}
     <div class="div-form-login">
         <h3>Login into your account</h3>
-        <form method="POST" action="">
+        <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
             <input type="email" name="email" placeholder="Enter email address" /><br>
             <input type="password" name="password" placeholder="Enter password" /><br>

@@ -1,4 +1,3 @@
-from webbrowser import get
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -69,7 +68,10 @@ def registerUser(request):
 
 
 def home(request):
-    return render(request, "home.html")
+    page = "login"
+    if request.user.is_authenticated:
+        return render(request, "home.html")
+    return render(request, "login_register.html", {"page": page})
 
 
 @login_required
