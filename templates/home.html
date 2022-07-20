@@ -3,6 +3,7 @@
 {%block title%}Home{%endblock%}
 {% block content %}
 {% if user.is_authenticated %}
+{{ request.user.email|json_script:"user_id" }}
 <div class="home-container">
     <div class="user">
         <div>

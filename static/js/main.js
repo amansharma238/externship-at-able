@@ -1,4 +1,6 @@
 // greeting
+
+const user_email = JSON.parse(document.getElementById('user_id').textContent);
 var myDate = new Date();
 var hrs = myDate.getHours();
 var greet;
@@ -77,26 +79,31 @@ async function filterFunction(link, filter) {
         phone_number.innerText = lead.phone_number
         let anArray = ["New Lead", "Hot Lead", "Med Lead", "Grey Lead", "Success"];
         let new_list = anArray.splice(anArray.indexOf(lead.state), 1);
-        state.innerHTML = "<form><select name='states' id='state' class='nlead " + (lead.state).replace(/\s+/g, '') + "'>\
+        state.innerHTML = "<select name='states' id='state' class='nlead " + (lead.state).replace(/\s+/g, '') + "'>\
                         <option class='nlead "+ (lead.state).replace(/\s+/g, '') + "' value='" + lead.state + "'>" + lead.state + "</option>\
                         <option class='nlead "+ anArray[0].replace(/\s+/g, '') + "' value='" + anArray[0] + "'>" + anArray[0] + "</option>\
                         <option class='nlead "+ anArray[1].replace(/\s+/g, '') + "' value='" + anArray[1] + "'>" + anArray[1] + "</option>\
                         <option class='nlead "+ anArray[2].replace(/\s+/g, '') + "' value='" + anArray[2] + "'>" + anArray[2] + "</option>\
                         <option class='nlead "+ anArray[3].replace(/\s+/g, '') + "' value='" + anArray[3] + "'>" + anArray[3] + "</option>\
                         </select>"
-        console.log(state);
         state.querySelector("select").addEventListener('change', (e) => {
-            console.log(e.target.value);
+            // console.log(e.target.value);
             var new_data = lead;
             new_data.state = e.target.value;
-            console.log("new data: ", new_data);
+            // console.log("new data: ", new_data);
             changeStatus(new_data);
         });
         assigned.innerText = lead.user_id.first_name + " " + lead.user_id.last_name
+
         // console.log(lead.user_id.email, lead.id)
 
         view.innerHTML = "<input type='button' id=" + lead.user_id.email + "/" + lead.id + " value='view' class='button' onmouseover='zoom(this);' />"
         // console.log("valueeeeee: ", view.children[0].value);
+
+        if (user_email !== lead.user_id.email) {
+            state.lastChild.disabled = true;
+            view.lastChild.disabled = true;
+        }
 
         let viewvar = remarkFunc("/api/remarks/" + lead.user_id.email + "/" + lead.id)
         // console.log("dkjsdkj ", viewvar);
@@ -115,7 +122,6 @@ function getCookie(name) {
     var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
     return v ? v[2] : null;
 }
-
 
 
 // Implement remarks
