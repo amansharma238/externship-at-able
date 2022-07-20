@@ -1,66 +1,87 @@
 {% extends 'main.html' %}
-
+{% load static %}
+{%block title%}Analytics{%endblock%}
 {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<div class="user">
-    <h2 id="greet">Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
-    <p>Here’s how your dashboard looks like today!</p>
-</div>
-<div class="row">
-    <div id="column">
-        <div class="stats">
-            <div id="total">
-                <h1>📊</h1>
-                <div id="ttotal">
-                </div>
-            </div>
-            <div id="hot">
-                <h1>🔥</h1>
-                <div id="hhot">
-                </div>
-            </div>
-            <div id="med">
-                <h1>👍</h1>
-                <div id="mmed">
-                </div>
-            </div>
-            <div id="gre">
-                <h1>👎</h1>
-                <div id="ggre">
-                </div>
-            </div>
+{% if user.is_staff or user.is_superuser%}
+<div class="analytic-container">
+    <div class="user">
+        <div>
+            <img id="profile-pic" src="{{request.user.profile.url}}" />
         </div>
-        <div class="graph">
-            <h2 style="display: inline;">Lead Statistics</h2>
-            <div id="select-days">
-                <select name="days" id="day">
-                    <option value="Last 7 days">Last 7 days</option>
-                    <option value="Last Week">Last Week</option>
-                    <option value="Last Month">Last Month</option>
-                </select>
-            </div>
-            <div class="wrapper">
-                <canvas id="myChart4"></canvas>
-            </div>
+        <div>
+            <h2 id="greet">Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
+            <p>Here's how your dashboard looks like today!</p>
         </div>
     </div>
-    <div class="analytics-table">
-        <table width="100%">
-            <thead>
-                <tr style="text-align: left;">
-                    <th>Rank</th>
-                    <th>Full Name</th>
-                    <th>Leads Converted</th>
-                </tr>
-            </thead>
-            <tbody id="analytics-body">
-            </tbody>
-        </table>
+    <div class="stats-data">
+        <div id="column">
+            <div class="stats">
+                <div id="total">
+                    <div>
+                        <div id="ttotal">
+                        </div>
+                        <p>Total Leads</p>
+                    </div>
+                    <h1>📊</h1>
+                </div>
+                <div id="hot">
+                    <div>
+                        <div id="hhot">
+                        </div>
+                        <p>Hot Leads</p>
+                    </div>
+                    <h1>🔥</h1>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div id="med">
+                    <div>
+                        <div id="mmed">
+                        </div>
+                        <p>Medium Leads</p>
+                    </div>
+                    <h1>👍</h1>
+                </div>
+                <div id="gre">
+                    <div>
+                        <div id="ggre">
+                        </div>
+                        <p>Grey Leads</p>
+                    </div>
+                    <h1>👎</h1>
+                </div>
+            </div>
+            <div class="graph">
+                <h2>Lead Statistics</h2>
+                <div id="select-days">
+                    <select name="days" id="day">
+                        <option value="Last 7 days">Last 7 days</option>
+                        <option value="Last Week">Last Week</option>
+                        <option value="Last Month">Last Month</option>
+                    </select>
+                </div>
+                <div class="wrapper">
+                    <canvas id="myChart4"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="analytics-table">
+            <table id="analytic-data-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Full Name</th>
+                        <th>Leads Converted</th>
+                    </tr>
+                </thead>
+                <tbody id="analytics-body">
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <script>
-
     var myDate = new Date();
     var hrs = myDate.getHours();
     var greet;
@@ -88,6 +109,7 @@
         while (true) {
             const response = await fetch(link);
             data = await response.json();
+            console.log("dataaa: ", data);
             data.results.forEach(i => {
                 newdata.push(i)
             })
@@ -100,6 +122,7 @@
 
     async function dataFunc() {
         newdata = await funcName("/api/leads/");
+        console.log("newdata: ", newdata);
         let arr = [];
         let rank = {};
         let rrank = {};
@@ -134,7 +157,7 @@
             let ind = document.createElement('td');
             name.innerText = i;
             leadconverted.innerText = sorted[i];
-            ind = `#${index}`;
+            ind.innerHTML = `#${index}`;
             row.append(ind, name, leadconverted);
             sales.append(row);
             index += 1;
@@ -254,22 +277,24 @@
                 })
             }
 
+
+
             var totalhot = sum(hot);
             var totalmed = sum(med);
             var totalgrey = sum(grey);
-            var total = totalhot + totalmed + totalgrey;
-
+            var total = newdata.length;
+            console.log("total: ", total);
             let totaldiv = document.getElementById("ttotal");
-            totaldiv.innerHTML = `<h2>${total}</h2> <p>Total Leads</p>`;
+            totaldiv.innerHTML = `<h2>${total}</h2>`;
 
             let hotdiv = document.getElementById("hhot");
-            hotdiv.innerHTML = `<h2>${totalhot}</h2> <p>Hot Leads</p>`;
+            hotdiv.innerHTML = `<h2>${totalhot}</h2>`;
 
             let meddiv = document.getElementById("mmed");
-            meddiv.innerHTML = `<h2>${totalmed}</h2> <p>Medium Leads</p>`;
+            meddiv.innerHTML = `<h2>${totalmed}</h2>`;
 
             let grediv = document.getElementById("ggre");
-            grediv.innerHTML = `<h2>${totalgrey}</h2> <p>Grey Leads</p>`;
+            grediv.innerHTML = `<h2>${totalgrey}</h2>`;
 
             let data_list = [
                 {
@@ -344,5 +369,5 @@
     }
     dataFunc();
 </script>
-
+{% endif %}
 {% endblock %}

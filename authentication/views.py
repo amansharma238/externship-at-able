@@ -41,7 +41,7 @@ def loginUser(request):
             messages.error(request, "Username or Password does not exist.")
 
     context = {"page": page}
-    return render(request, "login_register.html", context)
+    return render(request, "login.html", context)
 
 
 @login_required
@@ -64,14 +64,14 @@ def registerUser(request):
         else:
             messages.error(request, "An error occured during registration")
 
-    return render(request, "login_register.html", {"form": form})
+    return render(request, "register.html", {"form": form})
 
 
 def home(request):
     page = "login"
     if request.user.is_authenticated:
         return render(request, "home.html")
-    return render(request, "login_register.html", {"page": page})
+    return render(request, "login.html", {"page": page})
 
 
 @login_required

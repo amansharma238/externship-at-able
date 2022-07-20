@@ -1,4 +1,3 @@
-
 // greeting
 var myDate = new Date();
 var hrs = myDate.getHours();
@@ -19,7 +18,6 @@ function checkBoxToggle(source) {
             checkboxes[i].checked = source.checked;
     }
 }
-
 
 async function changeStatus(rawdata) {
     var token = getCookie('csrftoken');
@@ -63,6 +61,8 @@ async function filterFunction(link, filter) {
     data.results.forEach(lead => {
         let check = document.createElement('input')
         check.type = "checkbox"
+        let check_box = document.createElement('td');
+        check_box.append(check);
         let row = document.createElement('tr')
         let name = document.createElement('td')
         let email = document.createElement('td')
@@ -77,13 +77,14 @@ async function filterFunction(link, filter) {
         phone_number.innerText = lead.phone_number
         let anArray = ["New Lead", "Hot Lead", "Med Lead", "Grey Lead", "Success"];
         let new_list = anArray.splice(anArray.indexOf(lead.state), 1);
-        state.innerHTML = "<form><select name='states' id='state'>\
-                        <option value='" + lead.state + "'>" + lead.state + "</option>\
-                        <option value='" + anArray[0] + "'>" + anArray[0] + "</option>\
-                        <option value='" + anArray[1] + "'>" + anArray[1] + "</option>\
-                        <option value='" + anArray[2] + "'>" + anArray[2] + "</option>\
-                        <option value='" + anArray[3] + "'>" + anArray[3] + "</option>\
+        state.innerHTML = "<form><select name='states' id='state' class='nlead " + (lead.state).replace(/\s+/g, '') + "'>\
+                        <option class='nlead "+ (lead.state).replace(/\s+/g, '') + "' value='" + lead.state + "'>" + lead.state + "</option>\
+                        <option class='nlead "+ anArray[0].replace(/\s+/g, '') + "' value='" + anArray[0] + "'>" + anArray[0] + "</option>\
+                        <option class='nlead "+ anArray[1].replace(/\s+/g, '') + "' value='" + anArray[1] + "'>" + anArray[1] + "</option>\
+                        <option class='nlead "+ anArray[2].replace(/\s+/g, '') + "' value='" + anArray[2] + "'>" + anArray[2] + "</option>\
+                        <option class='nlead "+ anArray[3].replace(/\s+/g, '') + "' value='" + anArray[3] + "'>" + anArray[3] + "</option>\
                         </select>"
+        console.log(state);
         state.querySelector("select").addEventListener('change', (e) => {
             console.log(e.target.value);
             var new_data = lead;
@@ -104,7 +105,7 @@ async function filterFunction(link, filter) {
             remarkFunc("/api/remarks/" + lead.user_id.email + "/" + lead.id)
             modal_container.classList.add('show');
         })
-        row.append(check, id, name, email, phone_number, assigned, state, view)
+        row.append(check_box, id, name, email, phone_number, assigned, state, view)
         dataTable2.append(row)
     })
 }

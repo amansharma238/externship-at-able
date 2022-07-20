@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True;
 
 ALLOWED_HOSTS = ["*"]
 
@@ -43,7 +43,10 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "storages",
+    "crispy_forms",
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 AUTH_USER_MODEL = "authentication.SalesUser"
 

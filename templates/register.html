@@ -1,0 +1,44 @@
+{% extends 'main.html' %}
+{% load static %} {% block title %}Register{% endblock %}
+{% block content %}
+<div class="authenticate-container">
+    <div class="div-welcome">
+        <div>
+            <h1>Welcome to Your Dashboard</h1>
+        </div>
+        <div>
+            <span>This is the homepage of lead management system, login now to begin</span>
+        </div>
+        <div>
+            <img src="{% static 'images/dashboard1.svg' %}" alt="random" width="500" height="450">
+        </div>
+    </div>
+    <div class="div-form register">
+        <div>
+            <div>
+                <h3>Register a new account</h3>
+            </div>
+            <div>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <p>
+                        {{ field }}<br>
+                        {% if field.help_text %}
+                        <small style="color: grey">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                    <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                    </p>
+                    {% endfor %}
+                    <button type="submit">Sign up</button>
+                </form>
+                <div>
+                    <p>Already Have an account? <a href="{% url 'login' %}">Login Now</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

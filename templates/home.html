@@ -1,76 +1,75 @@
 {% extends 'main.html' %}
 {% load static %}
+{%block title%}Home{%endblock%}
 {% block content %}
 {% if user.is_authenticated %}
-{% if user.user_type == 'admin' %}
-<div class="analytics">
-    <a href="{% url 'analytics' %}">Analytics</a>
-</div>
-{% endif %}
-<div class="user">
-    <div style="width: 10%; float:left">
-        <img class="profile-pic" src="{{request.user.profile.url}}" style=" width: 90px;
-        height: 90px;
-        margin: 0 auto;
-        border-radius: 50%;
-        padding: 1%;
-        margin-top: 7%;">
-    </div>
-    <div style="width: 90%; float:right">
-        <h2 id="greet">Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
-        <p>Below you will find the list of all assigned leads to you.</p>
-    </div>
-</div>
-<div class="filter">
-    <h3>Filter leads by status</h3>
-    <div id="input-filter">
-        <input type="button" name="New Lead" value="New Lead" id="leadsinput" />
-        <input type="button" name="Hot Lead" value="Hot Lead" id="leadsinput" />
-        <input type="button" name="Med Lead" value="Med Lead" id="leadsinput" />
-        <input type="button" name="Grey Lead" value="Grey Lead" id="leadsinput" />
-        <input type="button" name="Success" value="Success" id="leadsinput" />
-    </div>
-</div>
-<div class="lead-table">
-    <table id="data-table" width="100%">
-        <thead>
-            <tr style="text-align: left;">
-                <th><input type="checkbox" onclick="checkBoxToggle(this);"></th>
-                <th>S.No.</th>
-                <th>Full Name</th>
-                <th>Email Address</th>
-                <th>Phone Number</th>
-                <th>Assigned to</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody id="data-table2">
-        </tbody>
-    </table>
-    <div class="modal-container" id="modal_container">
-        <div class="modal">
-            <h2>Add remark to this lead <button type="button" id="close">X</button></h2>
-            <div id="leadremark">
-            </div>
-            <form id="userremark">
-                {% csrf_token %}
-                <textarea name="remark" id="remark" placeholder="Add your remarks here" rows="4"></textarea>
-                <button type="submit" id="close-save" onclick="passData(this)">Save and exit</button>
-            </form>
+<div class="home-container">
+    <div class="user">
+        <div>
+            <img id="profile-pic" src="{{request.user.profile.url}}" />
+        </div>
+        <div>
+            <h2 id="greet">Good Morning, {{ user.first_name }} {{ user.last_name}}! </h2>
+            <p>Below you will find the list of all assigned leads to you.</p>
         </div>
     </div>
-</div>
-<div id="paginator">
+    <div class="filter">
+        <div>
+            <h3>Filter leads by status</h3>
+        </div>
+        <ul id="input-filter">
+            <li>
+                <input type="button" name="New Lead" value="New Lead" id="leadsinput" />
+            </li>
+            <li>
+                <input type="button" name="Hot Lead" value="Hot Lead" id="leadsinput" />
+            </li>
+            <li>
+                <input type="button" name="Med Lead" value="Med Lead" id="leadsinput" />
+            </li>
+            <li>
+                <input type="button" name="Grey Lead" value="Grey Lead" id="leadsinput" />
+            </li>
+            <li>
+                <input type="button" name="Success" value="Success" id="leadsinput" />
+            </li>
+        </ul>
+    </div>
+
+    <div class="lead-table">
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" onclick="checkBoxToggle(this);"></th>
+                    <th>S.No.</th>
+                    <th>Full Name</th>
+                    <th>Email Address</th>
+                    <th>Phone Number</th>
+                    <th>Assigned to</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="data-table2">
+            </tbody>
+        </table>
+        <div class="modal-container" id="modal_container">
+            <div class="modal">
+                <h2>Add remark to this lead <button type="button" id="close">X</button></h2>
+                <div id="leadremark">
+                </div>
+                <form id="userremark">
+                    {% csrf_token %}
+                    <textarea name="remark" id="remark" placeholder="Add your remarks here" rows="4"></textarea>
+                    <button type="submit" id="close-save" onclick="passData(this)">Save and exit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="paginator"></div>
 </div>
 <script src="{% static 'js/main.js' %}">
 </script>
-{% else %}
-<div id="home-container">
-    <p>You are not logged in</p>
-    <a href="{% url 'login' %}" id="login">Log In</a>
-    <a href="{% url 'register' %} " id="logout">Sign Up</a>
-</div>
 {% endif %}
 
 {% endblock %}

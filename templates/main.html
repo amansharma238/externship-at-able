@@ -8,19 +8,63 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" text="text/css" href="{% static 'css/styles.css' %}">
-    <title>Sales Management</title>
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.dc17e0ed8658.ico' %}">
+    <title>{% block title %}{{ settings.SETTING }}{% endblock %}</title>
 </head>
 
 <body>
-    {% include 'navbar.html' %}
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-            {% endfor %}
-    </ul>
-    {% endif %}
+    {% block navbar %}
+    <nav>
+        <div class="nav-bar">
+            <a href="/"><img src="{% static 'images/cuvette_icon.svg' %}"></a>
+            <div>
+                <ul class="">
+                    {% if user and user.is_authenticated %}
+                    {% if user.is_staff or user.is_superuser%}
+                    <a class="nav-link" href="{% url 'admin:index' %}">
+                        <button type="button" class="btn primary">
+                            Admin
+                        </button>
+                    </a>
+                    <a href="{% url 'analytics' %}">
+                        <button type="button" class="btn success">
+                            Analytics
+                        </button>
+                    </a>
+                    {% endif %}
+                    <a class="nav-link" href="{% url 'logout' %}">
+                        <button type="button" class="btn danger">
+                            Logout
+                        </button>
+                    </a>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'login' %}">
+                            <button type="button" class="btn primary">
+                                Login
+                            </button>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">
+                            <button type="button" class="btn primary">
+                                Register
+                            </button>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% if messages %} {% for message in messages %}
+    <div class="alert alert-{{message.level_tag}} alert-dismissible fade show my-1 py-2" role="alert">
+        {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %} {% endif %}
     {% block content %}
     {% endblock %}
 </body>
